@@ -116,8 +116,19 @@ plot(res,which=4)
 ## So our in-sample conditional correlation estimate is 
 vcvDCC[, 2] <- DCCrho   
 
-# Convert the xts object to a data frame
-DCCrho_df <- as.data.frame(DCCrho)
+## Exporting data
 
-# Export the data frame to a CSV file named "DCCrho_data.csv" in the current working directory
-write.csv(DCCrho_df, file = "DCCrho_data.csv")
+# Convert the xts object to a data frame
+DCCrho_df <- data.frame(Date = index(DCCrho),
+                        DCCrho = coredata(DCCrho))
+
+# Export the data frame to a CSV file
+write.csv(DCCrho_df, file = "DCCrho_data.csv", row.names = FALSE)
+
+
+# Convert the exchange rate data to a data frame
+exchange_rate_df <- data.frame(Date = index(cleanedData$USDBRL.X.Adjusted),
+                               Exchange_Rate = coredata(cleanedData$USDBRL.X.Adjusted))
+
+# Export the data frame to a CSV file
+write.csv(exchange_rate_df, file = "exchange_rates.csv", row.names = FALSE)
