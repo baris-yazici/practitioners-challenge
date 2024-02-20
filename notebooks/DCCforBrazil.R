@@ -115,3 +115,9 @@ plot(res,which=4)
 
 ## So our in-sample conditional correlation estimate is 
 vcvDCC[, 2] <- DCCrho   
+
+# Convert the xts object to a data frame
+DCCrho_df <- as.data.frame(DCCrho)
+
+# Export the data frame to a CSV file named "DCCrho_data.csv" in the current working directory
+write.csv(DCCrho_df, file = "DCCrho_data.csv")
