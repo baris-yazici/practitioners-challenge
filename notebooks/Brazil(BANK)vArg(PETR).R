@@ -119,3 +119,17 @@ plot(res,which=4)
 vcvDCC[, 2] <- DCCrho   
 
 summary(DCCrho)
+
+# Convert the xts object to a data frame
+DCCrho_bba_ypf <- data.frame(Date = index(DCCrho),
+                        DCCrho = coredata(DCCrho))
+# Export the data frame to a CSV file
+write.csv(DCCrho_bba_ypf, file = "DCCrho_bba_ypf.csv", row.names = FALSE)
+
+# Convert the exchange rate data to a data frame
+exchange_rate_df <- data.frame(Date = index(cleanedData$USDBRL.X.Adjusted),
+                               Exchange_Rate_BRL = coredata(cleanedData$USDBRL.X.Adjusted),
+                               Exchange_Rate_ARS = coredata(cleanedData$USDARS.X.Adjusted))
+
+# Export the data frame to a CSV file
+write.csv(exchange_rate_df, file = "exchange_rates_brl_ars.csv", row.names = FALSE)
