@@ -39,8 +39,7 @@ nonTradingDays <- apply(Adjusted_Stock_Prices[, -1], 1, function(x) any(is.na(x)
 cleanedData <- Adjusted_Stock_Prices[!nonTradingDays, ]
 # Step 3 : Carry forward last values for when exchange rate markets are closed. 
 cleanedData <- na.locf(cleanedData)
-sum(is.na(cleanedData[,"PETR3.SA.Adjusted"]))
-sum(is.na(cleanedData[,"BBAS3.SA.Adjusted"]))
+
 
 # Adjusting the stock prices
 cleanedData$PETR3.SA.Adjusted <- cleanedData$PETR3.SA.Adjusted/ cleanedData$USDBRL.X.Adjusted
@@ -76,8 +75,6 @@ arima_orders <- list(
 
 # Create a list of ugarchspec specifications with ARIMA for the mean model
 
-# Assuming arima_orders is predefined, e.g.,
-# arima_orders <- list(c(3,0,5), c(0,0,0))
 
 uspec_list <- lapply(arima_orders, function(order) {
   ugarchspec(
