@@ -126,5 +126,8 @@ vcvDCC[, 2] <- DCCrho
 
 summary(DCCrho)
 
-
-
+# Convert the xts object to a data frame
+DCCrho_bba_petr <- data.frame(Date = index(DCCrho),
+                             DCCrho = coredata(DCCrho))
+# Export the data frame to a CSV file
+write.csv(DCCrho_bba_petr, file = "DCCrho_bba_petr.csv", row.names = FALSE)                
