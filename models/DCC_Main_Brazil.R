@@ -11,9 +11,9 @@ rm(list = ls())
 ENV.New <- new.env()
 
 # List of company tickers.
-brazil <- c('POMO3.SA', 'JBSS3.SA', 'MRFG3.SA', 'TSLA34.SA',  
+brazil <- c('POMO3.SA', 'JBSS3.SA' , 'MRFG3.SA', 'TSLA34.SA',  
             'OIBR4.SA', 'BICR11.SA', 'PETR4.SA', 'BBAS3.SA', 
-            'BBDC4.SA', 'PCAR3.SA', 'TRAD3.SA', 'BRIV4.SA')
+            'BBDC4.SA', 'PCAR3.SA', 'TRAD3.SA', 'BRIV4.SA') 
 
 # Exchange rate for Brazil.
 exchange_rates <- c('USDBRL=X') # also change it where we divide on line 75
@@ -26,9 +26,10 @@ combinations <- expand.grid(brazil, brazil) %>%
 # Remove duplicate combinations (e.g., remove both "A B" and "B A")
 combinations <- combinations[!(duplicated(paste(pmin(as.character(combinations$Var1), as.character(combinations$Var2)), pmax(as.character(combinations$Var1), as.character(combinations$Var2))))), ]
 
-
+i = 1
 # Loop through each row of combinations
 for (i in 1:nrow(combinations)) {
+  
   combination <- combinations[i, ]
   ticker_combination <- as.character(unlist(combination))
   
@@ -79,26 +80,26 @@ for (i in 1:nrow(combinations)) {
     log_returns_demean <- sweep(x = log_returns, MARGIN = 2, STATS = AvgRet)
     
     
-# Fitting ARIMA models to the three series
-fit_auto1 <- auto.arima(log_returns_demean[,2]) # Company 1
-fit_auto2 <- auto.arima(log_returns_demean[,3]) # Company 2
-fit_auto3 <- auto.arima(log_returns_demean[,1]) # Exchange Rate
-
-# Extracting the orders
-order_auto1 <- c(fit_auto1$arma[1], fit_auto1$d, fit_auto1$arma[6])
-order_auto2 <- c(fit_auto2$arma[1], fit_auto2$d, fit_auto2$arma[6])
-order_auto3 <- c(fit_auto3$arma[1], fit_auto3$d, fit_auto3$arma[6])
-
-arima_orders <- list(order_auto1, order_auto2)
-
-# Create a list of ugarchspec specifications with ARIMA for the mean model
-uspec_list <- lapply(arima_orders, function(order) {
-  ugarchspec(
-    variance.model = list(model = "gjrGARCH", garchOrder = c(1,1,1)),  
-    mean.model = list(armaOrder = c(order[1], order[3]), include.mean = TRUE),  # ARIMA(p,0,q) since d=0 for GARCH
-    distribution.model = "std"  # std for t-distribution
-  )
-})
+    # Fitting ARIMA models to the three series
+    fit_auto1 <- auto.arima(log_returns_demean[,2]) # Company 1
+    fit_auto2 <- auto.arima(log_returns_demean[,3]) # Company 2
+    fit_auto3 <- auto.arima(log_returns_demean[,1]) # Exchange Rate
+    
+    # Extracting the orders
+    order_auto1 <- c(fit_auto1$arma[1], fit_auto1$d, fit_auto1$arma[6])
+    order_auto2 <- c(fit_auto2$arma[1], fit_auto2$d, fit_auto2$arma[6])
+    order_auto3 <- c(fit_auto3$arma[1], fit_auto3$d, fit_auto3$arma[6])
+    
+    arima_orders <- list(order_auto1, order_auto2)
+    
+    # Create a list of ugarchspec specifications with ARIMA for the mean model
+    uspec_list <- lapply(arima_orders, function(order) {
+      ugarchspec(
+        variance.model = list(model = "gjrGARCH", garchOrder = c(1,1,1)),  
+        mean.model = list(armaOrder = c(order[1], order[2]), include.mean = TRUE),  # ARIMA(p,0,q) since d=0 for GARCH
+        distribution.model = "std"  # std for t-distribution
+      )
+    })
     
     # Replicate it into a multispec() element
     uspec = multispec(uspec_list)
@@ -114,11 +115,6 @@ uspec_list <- lapply(arima_orders, function(order) {
     
     # Fit the specification to the data
     res <- dccfit(spec, data = log_returns_demean[,2:3])
-    
-    # Check if there was an error in fitting the model
-    #if (inherits(res, "try-error")) {
-    #  next  # Skip to the next iteration if there's an error
-    #}
     
     # In sample conditional covariance
     H <- res@mfit$H
