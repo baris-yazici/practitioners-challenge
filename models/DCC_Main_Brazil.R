@@ -18,7 +18,6 @@ brazil <- c('POMO3.SA', 'JBSS3.SA' , 'MRFG3.SA', 'TSLA34.SA',
 # Exchange rate for Brazil.
 exchange_rates <- c('USDBRL=X') # also change it where we divide on line 75
 
-
 # Generate all combinations of pairs
 combinations <- expand.grid(brazil, brazil) %>%
   filter(Var1 != Var2)  # Remove combinations with the same element
@@ -26,7 +25,6 @@ combinations <- expand.grid(brazil, brazil) %>%
 # Remove duplicate combinations (e.g., remove both "A B" and "B A")
 combinations <- combinations[!(duplicated(paste(pmin(as.character(combinations$Var1), as.character(combinations$Var2)), pmax(as.character(combinations$Var1), as.character(combinations$Var2))))), ]
 
-i = 1
 # Loop through each row of combinations
 for (i in 1:nrow(combinations)) {
   
