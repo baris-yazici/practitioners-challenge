@@ -4,10 +4,6 @@
 # r: annualized interest rate
 # debt: face value of its debt
 
-#The firm from Argentina: YPF.BA
-
-## Brazil vs Argentina
-
 library(quantmod)
 library(tidyverse)
 library(rugarch)
